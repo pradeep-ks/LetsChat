@@ -6,7 +6,7 @@ var io = require('socket.io')(http);
 var mongoose = require('mongoose');
 
 // Uncomment the following code to run on Heroku
-var port = process.env.PORT || 5500;
+// var port = process.env.PORT || 5500;
 app.use(express.static(__dirname)); // serving a static file inside current directory
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -50,6 +50,7 @@ mongoose.connect(databaseUrl, (err) => {
     console.log('Connection Successfull....');
 });
 // listen to http port
-var server = http.listen(port, () => {
-    console.log('Server is now listening on port %d', /* server.address(). */port);
+var server = http.listen(4100, () => {
+    console.log('Server is now listening on port: ', server.address().port);
+    // console.log('Server is now listening on port %d', /* server.address(). */port);
 });        // listen to port 4100
