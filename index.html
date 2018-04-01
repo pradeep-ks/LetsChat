@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Simple Chat Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="jumbotron" style="margin: 10px auto;">
+            <h1 class="display-4">Send Message</h1>
+            <div class="row">
+                <div class="col-md">
+                    <input type="text" class="form-control" id="name" placeholder="Name....">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <textarea name="text" id="text" class="form-control" placeholder="Type your message here...."></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <button class="btn btn-success" id="send">Send</button>
+                </div>
+            </div>
+        </div>
+        <div id="messages"></div>
+    </div>
+    <!-- custom javascript -->
+    <script>
+        var socket = io();
+        $(() => {
+            console.log('Inside $(document).ready()....');
+            $('#send').click(() => {
+                console.log('Inside send#click()....');
+                var msg = {
+                    name: $('#name').val(),
+                    text: $('#text').val()
+                };
+                postMessage(msg);
+                $('#name').val('');
+                $('#text').val('');
+            });
+            getMessages();
+        });
+
+        // socket listener
+        socket.on('message', addMessage);
+        
+        // function to add messages
+        function addMessage(message) {
+            console.log('Inside addMessage()....');
+            $('#messages').append(`<h4> ${message.name}</h4><p>${message.text}</p>`);
+        }
+
+        // function to get messages from service
+        function getMessages() {
+            console.log('Inside getMessages()....');
+            $.get('http://localhost:4100/messages', (data) => {
+                data.forEach(addMessage);
+            });
+        }
+
+        // function to post message
+        function postMessage(message) {
+            console.log('Inside postMessage()....');
+            $.post('http://localhost:4100/messages', message);
+        }
+    </script>
+</body>
+
+</html>
